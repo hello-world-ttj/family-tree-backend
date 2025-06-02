@@ -1,23 +1,24 @@
 {
   "name": "family-tree-backend",
   "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/hello-world-ttj/family-tree-backend#readme",
+  "bugs": {
+    "url": "https://github.com/hello-world-ttj/family-tree-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hello-world-ttj/family-tree-backend.git"
+  },
+  "license": "ISC",
+  "author": "hello-world-ttj",
+  "type": "commonjs",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
     "start": "nodemon app.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hello-world-ttj/family-tree-backend.git"
-  },
-  "author": "hello-world-ttj",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/hello-world-ttj/family-tree-backend/issues"
-  },
-  "homepage": "https://github.com/hello-world-ttj/family-tree-backend#readme",
-  "description": "",
   "dependencies": {
     "cli-color": "^2.0.4",
     "cors": "^2.8.5",
