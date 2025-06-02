@@ -2,6 +2,7 @@ const response_handler = require("../../helpers/responseHandler");
 const validations = require("../../validations");
 const Promotions = require("./promotions.model");
 const moment = require("moment-timezone");
+const { handle_priority_swap } = require("./promotions.service");
 
 exports.get_promotions = async (req, res) => {
   try {
@@ -63,7 +64,9 @@ exports.create_promotions = async (req, res) => {
         `Invalid input: ${create_promotions_validator.error}`
       );
     }
-    //TODO: Handle priority swap
+    if (req.body.type) {
+      await handle_priority_swap(req.body.priority, req.body.type, null);
+    }
     const new_promotions = await Promotions.create(req.body);
     return response_handler(
       res,
@@ -95,7 +98,15 @@ exports.update_promotions = async (req, res) => {
     if (!id) {
       return response_handler(res, 400, "Promotions id is required");
     }
-    //TODO: Handle priority swap
+    const existing_promotion = await Promotions.findById(id);
+    if (!existing_promotion) {
+      return response_handler(res, 400, "Promotions not found");
+    }
+    const promotion_type = req.body.type || existing_promotion.type;
+    if (req.body.priority) {
+      await handle_priority_swap(req.body.priority, promotion_type, id);
+      delete req.body.priority;
+    }
     const promotions = await Promotions.findByIdAndUpdate(id, req.body, {
       new: true,
     });
