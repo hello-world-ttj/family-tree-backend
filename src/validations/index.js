@@ -19,13 +19,13 @@ exports.update_news = Joi.object({
 });
 
 exports.create_promotions = Joi.object({
-  title: Joi.string().required(),
-  description: Joi.string().required(),
+  title: Joi.string(),
+  description: Joi.string(),
   type: Joi.string().required(),
   start_date: Joi.date().required(),
   end_date: Joi.date().required(),
-  media: Joi.string().required(),
-  link: Joi.string().required(),
+  media: Joi.string(),
+  link: Joi.string(),
   priority: Joi.number().required(),
   status: Joi.string(),
 });
