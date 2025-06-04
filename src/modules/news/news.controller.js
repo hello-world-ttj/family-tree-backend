@@ -84,7 +84,7 @@ exports.get_news = async (req, res) => {
       ];
     }
 
-    if (category !== "All") {
+    if (category !== "all") {
       filter.category = category;
     }
     if (status) {
