@@ -6,6 +6,7 @@ const clc = require("cli-color");
 const response_handler = require("./src/helpers/responseHandler");
 const news_route = require("./src/modules/news/news.routes");
 const promotions_route = require("./src/modules/promotions/promotions.routes");
+const events_route = require("./src/modules/events/events.routes");
 
 //! Create an instance of the Express application
 const app = express();
@@ -42,6 +43,7 @@ app.get("/health", (req, res) => {
 //* Configure routes for user API
 app.use(`${BASE_PATH}/news`, news_route);
 app.use(`${BASE_PATH}/promotions`, promotions_route);
+app.use(`${BASE_PATH}/events`, events_route);
 
 app.listen(PORT, () => {
   const port_message = clc.redBright(`✓ App is running on port: ${PORT}`);
