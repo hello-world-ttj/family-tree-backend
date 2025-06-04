@@ -4,7 +4,7 @@ const validations = require("../../validations");
 exports.get_events = async (req, res) => {
   try {
     const { page_no = 1, limit = 10 } = req.query;
-    const skip_count = 10 * (page_no - 1);
+    const skip_count = limit * (page_no - 1);
     const total_count = await Events.countDocuments();
     const data = await Events.find()
       .sort({ createdAt: -1, _id: -1 })
@@ -62,7 +62,7 @@ exports.create_events = async (req, res) => {
 exports.get_registered_events = async (req, res) => {
   try {
     const { page_no = 1, limit = 10 } = req.query;
-    const skip_count = 10 * (page_no - 1);
+    const skip_count = limit * (page_no - 1);
     const filter = { rsvp: { $elemMatch: { $eq: req.user_id } } };
     const total_count = await Events.countDocuments(filter);
     const data = await Events.find(filter)

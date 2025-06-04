@@ -4,7 +4,7 @@ const validations = require("../../validations");
 exports.get_roles = async (req, res) => {
   try {
     const { page_no = 1, limit = 10 } = req.query;
-    const skip_count = 10 * (page_no - 1);
+    const skip_count = limit * (page_no - 1);
     const total_count = await Roles.countDocuments();
     const data = await Roles.find().skip(skip_count).limit(limit);
     return response_handler(
