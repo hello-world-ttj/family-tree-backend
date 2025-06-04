@@ -83,3 +83,17 @@ exports.update_events = Joi.object({
   rsvp: Joi.string(),
   attendence: Joi.string(),
 });
+
+exports.create_role = Joi.object({
+  role_name: Joi.string().required(),
+  description: Joi.string().required(),
+  permissions: Joi.array().required(),
+  status: Joi.boolean(),
+});
+
+exports.update_role = Joi.object({
+  role_name: Joi.string(),
+  description: Joi.string(),
+  permissions: Joi.array(),
+  status: Joi.boolean(),
+});
