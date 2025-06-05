@@ -6,6 +6,10 @@ const clc = require("cli-color");
 const response_handler = require("./src/helpers/responseHandler");
 const news_route = require("./src/modules/news/news.routes");
 const promotions_route = require("./src/modules/promotions/promotions.routes");
+const family_route = require("./src/modules/family/family.routes");
+const user_route = require("./src/modules/user/user.routes");
+const person_route = require("./src/modules/person/person.routes");
+const relationship_route = require("./src/modules/relationship/relationship.routes");
 
 //! Create an instance of the Express application
 const app = express();
@@ -42,6 +46,10 @@ app.get("/health", (req, res) => {
 //* Configure routes for user API
 app.use(`${BASE_PATH}/news`, news_route);
 app.use(`${BASE_PATH}/promotions`, promotions_route);
+app.use(`${BASE_PATH}/families`, family_route);
+app.use(`${BASE_PATH}/users`, user_route);
+app.use(`${BASE_PATH}/persons`, person_route);
+app.use(`${BASE_PATH}/relationships`, relationship_route);
 
 app.listen(PORT, () => {
   const port_message = clc.redBright(`✓ App is running on port: ${PORT}`);
