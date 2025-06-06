@@ -97,3 +97,15 @@ exports.update_role = Joi.object({
   permissions: Joi.array(),
   status: Joi.boolean(),
 });
+
+exports.create_folder = Joi.object({
+  name: Joi.string().required(),
+  event: Joi.string().required(),
+  files: Joi.array(),
+});
+
+exports.update_folder = Joi.object({
+  name: Joi.string(),
+  event: Joi.string(),
+  files: Joi.array(),
+});
