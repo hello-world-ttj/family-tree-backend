@@ -153,11 +153,12 @@ exports.get_events_by_id = async (req, res) => {
     if (!id) {
       return response_handler(res, 400, "Event ID is required");
     }
-    const event = await Events.findById(id)
-      .populate("rsvp", "name image")
-      .populate("attendence", "name image")
-      .populate("coordinators", "name image");
+    const event = await Events.findById(id).populate();
+      // .populate("rsvp", "name image")
+      // .populate("attendence", "name image")
+      // .populate("coordinators", "name image");
 
+    //TODO: Send User data as response (name, email, image)
     if (!event) {
       return response_handler(res, 400, "Event not found");
     }

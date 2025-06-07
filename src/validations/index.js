@@ -51,11 +51,11 @@ exports.create_events = Joi.object({
   event_end_date: Joi.date().required(),
   poster_visibility_start_date: Joi.date().required(),
   poster_visibility_end_date: Joi.date().required(),
-  platform: Joi.string().required(),
-  link: Joi.string().required(),
-  venue: Joi.string().required(),
+  platform: Joi.string(),
+  link: Joi.string(),
+  venue: Joi.string(),
   organiser_name: Joi.string().required(),
-  coordinators: Joi.array().required(),
+  coordinators: Joi.array(),
   limit: Joi.number().required(),
   speakers: Joi.array().required(),
   status: Joi.string(),
@@ -97,6 +97,7 @@ exports.update_role = Joi.object({
   permissions: Joi.array(),
   status: Joi.boolean(),
 });
+
 
 exports.create_folder = Joi.object({
   name: Joi.string().required(),
