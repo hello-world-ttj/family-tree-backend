@@ -55,7 +55,8 @@ relationshipSchema.index({ person1: 1, person2: 1, type: 1 }, { unique: true });
 
 // Instance methods
 relationshipSchema.methods.getOtherPerson = function(personId) {
-  return this.person1.equals(personId) ? this.person2 : this.person1;
+  const pid = typeof personId === 'string' ? personId : personId.toString();
+  return this.person1._id.toString() === pid ? this.person2 : this.person1;
 };
 
 module.exports = mongoose.model('Relationship', relationshipSchema);

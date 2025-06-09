@@ -55,7 +55,14 @@ const personSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Person'
   },
-  
+  familyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Family'
+  },
+  relationships: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Relationship'
+  }],
   // Contact information
   email: String,
   phone: String,
