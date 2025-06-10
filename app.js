@@ -10,6 +10,8 @@ const family_route = require("./src/modules/family/family.routes");
 const user_route = require("./src/modules/user/user.routes");
 const person_route = require("./src/modules/person/person.routes");
 const relationship_route = require("./src/modules/relationship/relationship.routes");
+const request_route = require("./src/modules/request/request.routes");
+
 
 //! Create an instance of the Express application
 const app = express();
@@ -50,6 +52,9 @@ app.use(`${BASE_PATH}/families`, family_route);
 app.use(`${BASE_PATH}/users`, user_route);
 app.use(`${BASE_PATH}/persons`, person_route);
 app.use(`${BASE_PATH}/relationships`, relationship_route);
+app.use(`${BASE_PATH}/requests`, request_route);
+
+
 
 app.listen(PORT, () => {
   const port_message = clc.redBright(`✓ App is running on port: ${PORT}`);
