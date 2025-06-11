@@ -19,13 +19,13 @@ exports.update_news = Joi.object({
 });
 
 exports.create_promotions = Joi.object({
-  title: Joi.string().required(),
-  description: Joi.string().required(),
+  title: Joi.string(),
+  description: Joi.string(),
   type: Joi.string().required(),
   start_date: Joi.date().required(),
   end_date: Joi.date().required(),
-  media: Joi.string().required(),
-  link: Joi.string().required(),
+  media: Joi.string(),
+  link: Joi.string(),
   priority: Joi.number().required(),
   status: Joi.string(),
 });
@@ -40,4 +40,73 @@ exports.update_promotions = Joi.object({
   link: Joi.string(),
   priority: Joi.number(),
   status: Joi.string(),
+});
+
+exports.create_events = Joi.object({
+  event_name: Joi.string().required(),
+  description: Joi.string().required(),
+  type: Joi.string().required(),
+  image: Joi.string().required(),
+  event_start_date: Joi.date().required(),
+  event_end_date: Joi.date().required(),
+  poster_visibility_start_date: Joi.date().required(),
+  poster_visibility_end_date: Joi.date().required(),
+  platform: Joi.string(),
+  link: Joi.string(),
+  venue: Joi.string(),
+  organiser_name: Joi.string().required(),
+  coordinators: Joi.array(),
+  limit: Joi.number().required(),
+  speakers: Joi.array().required(),
+  status: Joi.string(),
+  rsvp: Joi.string(),
+  attendence: Joi.string(),
+});
+
+exports.update_events = Joi.object({
+  event_name: Joi.string(),
+  description: Joi.string(),
+  type: Joi.string(),
+  image: Joi.string(),
+  event_start_date: Joi.date(),
+  event_end_date: Joi.date(),
+  poster_visibility_start_date: Joi.date(),
+  poster_visibility_end_date: Joi.date(),
+  platform: Joi.string(),
+  link: Joi.string(),
+  venue: Joi.string(),
+  organiser_name: Joi.string(),
+  coordinators: Joi.array(),
+  limit: Joi.number(),
+  speakers: Joi.array(),
+  status: Joi.string(),
+  rsvp: Joi.string(),
+  attendence: Joi.string(),
+});
+
+exports.create_role = Joi.object({
+  role_name: Joi.string().required(),
+  description: Joi.string().required(),
+  permissions: Joi.array().required(),
+  status: Joi.boolean(),
+});
+
+exports.update_role = Joi.object({
+  role_name: Joi.string(),
+  description: Joi.string(),
+  permissions: Joi.array(),
+  status: Joi.boolean(),
+});
+
+
+exports.create_folder = Joi.object({
+  name: Joi.string().required(),
+  event: Joi.string().required(),
+  files: Joi.array(),
+});
+
+exports.update_folder = Joi.object({
+  name: Joi.string(),
+  event: Joi.string(),
+  files: Joi.array(),
 });

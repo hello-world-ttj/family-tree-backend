@@ -75,7 +75,7 @@ exports.delete_news = async (req, res) => {
 exports.get_news = async (req, res) => {
   try {
     const { page_no = 1, status, limit = 10, search, category } = req.query;
-    const skip_count = 10 * (page_no - 1);
+    const skip_count = limit * (page_no - 1);
     const filter = {};
     if (search) {
       filter.$or = [
@@ -84,7 +84,7 @@ exports.get_news = async (req, res) => {
       ];
     }
 
-    if (category !== "All") {
+    if (category !== "all") {
       filter.category = category;
     }
     if (status) {

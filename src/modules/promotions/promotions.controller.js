@@ -7,7 +7,7 @@ const { handle_priority_swap } = require("./promotions.service");
 exports.get_promotions = async (req, res) => {
   try {
     const { page_no = 1, type, limit = 10 } = req.query;
-    const skip_count = 10 * (page_no - 1);
+    const skip_count = limit * (page_no - 1);
     const filter = {};
     if (type) {
       filter.type = type;
