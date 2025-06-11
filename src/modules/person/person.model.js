@@ -72,8 +72,10 @@ const personSchema = new mongoose.Schema({
     state: String,
     country: String,
     zipCode: String
-  },
-  
+  },walletBalance: { type: Number, default: 0 },
+  lastRecharge: { type: Date },
+  lastRenewed: { type: Date },
+  nextRenewal: { type: Date },
   // Metadata
   isAlive: {
     type: Boolean,

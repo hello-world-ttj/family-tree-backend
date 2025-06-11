@@ -7,11 +7,11 @@ const notifications_route = require("../modules/notifications/notifications.rout
 const roles_route = require("../modules/roles/roles.routes");
 const logs_route = require("../modules/logs/logs.routes");
 const folder_route = require("../modules/folder/folder.routes");
-const family_route = require("./src/modules/family/family.routes");
-const user_route = require("./src/modules/user/user.routes");
-const person_route = require("./src/modules/person/person.routes");
-const relationship_route = require("./src/modules/relationship/relationship.routes");
-const request_route = require("./src/modules/request/request.routes"); 
+const family_route = require("../modules/family/family.routes");
+const user_route = require("../modules/user/user.routes");
+const person_route = require("../modules/person/person.routes");
+const relationship_route = require("../modules/relationship/relationship.routes");
+const request_route = require("../modules/request/request.routes"); 
 
 
 router.use("/news", news_route);

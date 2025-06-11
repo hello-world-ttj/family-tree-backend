@@ -8,7 +8,7 @@ const {
   getPersonRelationships
 } = require('./relationship.controller');
 
-const auth = require('../../middleware/auth');
+const auth = require('../../middlewares/auth');
 
 // GET /api/relationships - Get all relationships
 router.get('/', getAllRelationships);

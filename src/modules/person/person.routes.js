@@ -11,7 +11,7 @@ const {
 } = require('./person.controller');
 
 // Middleware for authentication (implement as needed)
-const auth = require('../../middleware/auth');
+const auth = require('../../middlewares/auth');
 
 // GET /api/persons - Get all persons with pagination and search
 router.get('/', getAllPersons);
