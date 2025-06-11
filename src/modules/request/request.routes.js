@@ -5,7 +5,7 @@ const {
   getPendingRequests,
   reviewMembershipRequest
 } = require('./request.controller');
-const auth = require('../../middleware/auth');
+const auth = require('../../middlewares/auth');
 
 // POST /api/requests - Create new membership request
 router.post('/', auth, createMembershipRequest);
