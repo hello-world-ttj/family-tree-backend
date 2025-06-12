@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const clc = require("cli-color");
+require('dotenv').config({ path: './.env' });
 
 const { MONGO_URL } = process.env;
 
