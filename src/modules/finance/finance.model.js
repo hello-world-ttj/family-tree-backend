@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
-  memberId: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true },
+  memberId: { type: mongoose.Schema.Types.ObjectId, ref: 'Person', required: true },
   campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign' },
   type: { type: String, enum: ['Wallet Recharge', 'CSR', 'ZAKATH'], required: true },
   amount: { type: Number, required: true },
