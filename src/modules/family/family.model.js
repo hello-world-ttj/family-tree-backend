@@ -6,9 +6,9 @@ const familySchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  description: {
-    type: String
-  },
+  // description: {
+  //   type: String
+  // },
   members: [{
     person: {
       type: mongoose.Schema.Types.ObjectId,
@@ -25,9 +25,9 @@ const familySchema = new mongoose.Schema({
       default: Date.now
     }
   }],
+  image: String,
   
-  // Family details
-  establishedDate: Date,
+  
   location: {
     city: String,
     state: String,
@@ -39,8 +39,7 @@ const familySchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  familyTraditions: [String],
-  familyHistory: String,
+  
   
   // Privacy and access
   isPrivate: {
