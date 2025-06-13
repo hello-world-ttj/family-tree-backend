@@ -79,6 +79,7 @@ const personSchema = new mongoose.Schema({
 totoalContribution: { type: Number, default: 0 },
   lastRenewed: { type: Date },
   nextRenewal: { type: Date },
+  reminderThreshold: { type: Number },
   // Metadata
   isAlive: {
     type: Boolean,

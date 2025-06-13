@@ -1,6 +1,8 @@
 const Person = require('./person.model');
 const Relationship = require('../relationship/relationship.model');
 const Family = require('../family/family.model');
+const Campaign = require('../campaign/campaign.model');
+
 // Get all persons
 const getAllPersons = async (req, res) => {
   try {
@@ -8,7 +10,6 @@ const getAllPersons = async (req, res) => {
     
     let query = {};
     
-    // Search functionality
     if (search) {
       query.$or = [
         { firstName: { $regex: search, $options: 'i' } },
@@ -49,13 +50,8 @@ const getPersonById = async (req, res) => {
       return res.status(404).json({ message: 'Person not found' });
     }
     
-    // Get children
     const children = await person.getChildren();
-    
-    // Get siblings
     const siblings = await person.getSiblings();
-    
-    // Get spouses
     const spouses = await person.getSpouses();
     
     res.json({
@@ -72,202 +68,20 @@ const getPersonById = async (req, res) => {
   }
 };
 
-// Create new person
-// const createPerson = async (req, res) => {
-//   try {
-//     const personData = req.body;
-//     const person = await Person.create(personData);
-
-//     // Handle parent-child relationships automatically
-//     if (personData.father) {
-//       await Relationship.create({
-//         person1: personData.father,
-//         person2: person._id,
-//         type: 'parent-child',
-//         status: 'active'
-//       });
-//     }
-
-//     if (personData.mother) {
-//       await Relationship.create({
-//         person1: personData.mother,
-//         person2: person._id,
-//         type: 'parent-child',
-//         status: 'active'
-//       });
-//     }
-
-//     // Handle multiple relationships if provided
-//     if (personData.relationships && Array.isArray(personData.relationships)) {
-//       const relationshipPromises = personData.relationships.map(rel => {
-//         return Relationship.create({
-//           person1: person._id,
-//           person2: rel.personId,
-//           type: rel.type,
-//           startDate: rel.startDate,
-//           endDate: rel.endDate,
-//           status: rel.status || 'active',
-//           notes: rel.notes
-//         });
-//       });
-//       await Promise.all(relationshipPromises);
-//     }
-
-//     // Handle multiple spouses if provided
-//     if (personData.spouses && Array.isArray(personData.spouses)) {
-//       const spousePromises = personData.spouses.map(spouse => {
-//         return Relationship.create({
-//           person1: person._id,
-//           person2: spouse.personId,
-//           type: 'spouse',
-//           startDate: spouse.marriageDate,
-//           endDate: spouse.divorceDate,
-//           status: spouse.status || 'active',
-//           marriageLocation: spouse.marriageLocation,
-//           notes: spouse.notes
-//         });
-//       });
-//       await Promise.all(spousePromises);
-//     }
-
-//     // Handle other relationships
-//     if (personData.relationships) {
-//       const relationshipPromises = personData.relationships.map(rel => {
-//         return Relationship.create({
-//           person1: person._id,
-//           person2: rel.personId,
-//           type: rel.type,
-//           startDate: rel.startDate,
-//           status: 'active'
-//         });
-//       });
-//       await Promise.all(relationshipPromises);
-//     }
-
-//     // Add to family if specified
-//     if (personData.familyId) {
-//       const family = await Family.findById(personData.familyId);
-//       if (family) {
-//         await family.addMember(person._id, personData.familyRole || 'other');
-//       }
-//     }
-
-//     // Return created person with populated relationships
-//     const createdPerson = await Person.findById(person._id)
-//       .populate('father mother')
-//       .exec();
-
-//     res.status(201).json(createdPerson);
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// };
-
-// const createPerson = async (req, res) => {
-//   try {
-//     const personData = req.body;
-    
-//     // Extract relationships data and remove from personData
-//     const relationshipsData = personData.relationships || [];
-//     const familyRole = personData.familyRole;
-//     delete personData.relationships;
-//     delete personData.familyRole;
-    
-//     // Create the person first
-//     const person = await Person.create(personData);
-
-//     // Handle parent-child relationships automatically
-//     if (personData.father) {
-//       const fatherRelationship = await Relationship.create({
-//         person1: personData.father,
-//         person2: person._id,
-//         type: 'parent-child',
-//         status: 'active'
-//       });
-//       person.relationships.push(fatherRelationship._id);
-//     }
-
-//     if (personData.mother) {
-//       const motherRelationship = await Relationship.create({
-//         person1: personData.mother,
-//         person2: person._id,
-//         type: 'parent-child',
-//         status: 'active'
-//       });
-//       person.relationships.push(motherRelationship._id);
-//     }
-
-//     // Handle additional relationships
-//     if (relationshipsData && Array.isArray(relationshipsData)) {
-//       const relationshipPromises = relationshipsData.map(async (rel) => {
-//         const relationship = await Relationship.create({
-//           person1: person._id,
-//           person2: rel.personId,
-//           type: rel.type,
-//           startDate: rel.startDate,
-//           endDate: rel.endDate,
-//           status: rel.status || 'active',
-//           notes: rel.notes,
-//           marriageLocation: rel.marriageLocation
-//         });
-        
-//         // Add relationship to both persons
-//         person.relationships.push(relationship._id);
-        
-//         // Also add to the other person
-//         const otherPerson = await Person.findById(rel.personId);
-//         if (otherPerson) {
-//           otherPerson.relationships.push(relationship._id);
-//           await otherPerson.save();
-//         }
-        
-//         return relationship;
-//       });
-      
-//       await Promise.all(relationshipPromises);
-//     }
-
-//     // Save person with relationship references
-//     await person.save();
-
-//     // Add to family if specified
-//     if (personData.familyId) {
-//       const family = await Family.findById(personData.familyId);
-//       if (family) {
-//         await family.addMember(person._id, familyRole || 'other');
-//       }
-//     }
-
-//     // Return created person with populated relationships
-//     const createdPerson = await Person.findById(person._id)
-//       .populate('father mother', 'firstName lastName')
-//       .populate('relationships')
-//       .exec();
-
-//     res.status(201).json(createdPerson);
-//   } catch (error) {
-//     console.error('Error creating person:', error);
-//     res.status(400).json({ message: error.message });
-//   }
-// };
-
+// Create person
 const createPerson = async (req, res) => {
   try {
     const personData = req.body;
     
-    // Extract relationships data and remove from personData
     const relationshipsData = personData.relationships || [];
     const familyRole = personData.familyRole;
-    const familyId = personData.familyId; // Store familyId before deleting
+    const familyId = personData.familyId;
     
     delete personData.relationships;
     delete personData.familyRole;
-    // Don't delete familyId yet as it might be needed for the Person model
     
-    // Create the person first
     const person = await Person.create(personData);
 
-    // Handle parent-child relationships automatically
     if (personData.father) {
       const fatherRelationship = await Relationship.create({
         person1: personData.father,
@@ -288,7 +102,6 @@ const createPerson = async (req, res) => {
       person.relationships.push(motherRelationship._id);
     }
 
-    // Handle additional relationships
     if (relationshipsData && Array.isArray(relationshipsData)) {
       const relationshipPromises = relationshipsData.map(async (rel) => {
         const relationship = await Relationship.create({
@@ -302,10 +115,8 @@ const createPerson = async (req, res) => {
           marriageLocation: rel.marriageLocation
         });
         
-        // Add relationship to both persons
         person.relationships.push(relationship._id);
         
-        // Also add to the other person
         const otherPerson = await Person.findById(rel.personId);
         if (otherPerson) {
           otherPerson.relationships.push(relationship._id);
@@ -318,10 +129,8 @@ const createPerson = async (req, res) => {
       await Promise.all(relationshipPromises);
     }
 
-    // Save person with relationship references
     await person.save();
 
-    // Add to family if specified
     if (familyId) {
       const family = await Family.findById(familyId);
       if (family) {
@@ -329,7 +138,6 @@ const createPerson = async (req, res) => {
       }
     }
 
-    // Return created person with populated relationships
     const createdPerson = await Person.findById(person._id)
       .populate('father mother', 'firstName lastName')
       .populate('relationships')
@@ -341,6 +149,7 @@ const createPerson = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
 // Update person
 const updatePerson = async (req, res) => {
   try {
@@ -369,7 +178,6 @@ const deletePerson = async (req, res) => {
       return res.status(404).json({ message: 'Person not found' });
     }
     
-    // Remove all relationships involving this person
     await Relationship.deleteMany({
       $or: [
         { person1: person._id },
@@ -377,7 +185,6 @@ const deletePerson = async (req, res) => {
       ]
     });
     
-    // Update children to remove parent references
     await Person.updateMany(
       { $or: [{ father: person._id }, { mother: person._id }] },
       { $unset: { father: "", mother: "" } }
@@ -459,6 +266,101 @@ const getDescendantTree = async (req, res) => {
   }
 };
 
+// Add wallet amount
+const addWalletAmount = async (req, res) => {
+  try {
+    const { personId, amount, reminderThreshold = 100 } = req.body;
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid amount' });
+    }
+
+    const person = await Person.findById(personId);
+    if (!person) {
+      return res.status(404).json({ message: 'Person not found' });
+    }
+
+    person.walletBalance += amount;
+    person.lastRecharge = new Date();
+    person.lastRechargeAmount = amount;
+    
+    // Store reminder threshold in person document
+    person.reminderThreshold = reminderThreshold;
+
+    await person.save();
+
+    // Note: Actual email/sms reminder would be implemented via a separate notification service
+    // This is just storing the threshold for now
+
+    res.status(200).json({
+      message: 'Wallet amount added successfully',
+      walletBalance: person.walletBalance,
+      lastRecharge: person.lastRecharge
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Donate to campaign from wallet
+const donateFromWallet = async (req, res) => {
+  try {
+    const { personId, campaignId, amount } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid donation amount' });
+    }
+
+    const person = await Person.findById(personId);
+    if (!person) {
+      return res.status(404).json({ message: 'Person not found' });
+    }
+
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+
+    if (campaign.status !== 'Active') {
+      return res.status(400).json({ message: 'Campaign is not active' });
+    }
+
+    if (person.walletBalance < amount) {
+      return res.status(400).json({ message: 'Insufficient wallet balance' });
+    }
+
+    // Deduct from wallet
+    person.walletBalance -= amount;
+    person.totoalContribution += amount;
+
+    // Add donation to campaign
+    campaign.doatedMembers.push({
+      member: personId,
+      amount
+    });
+    campaign.donatedAmount += amount;
+
+    // Check if target amount is reached
+    if (campaign.donatedAmount >= campaign.targetAmount) {
+      campaign.status = 'Transferred';
+    }
+
+    // Check if wallet balance is below reminder threshold
+    const needsReminder = person.reminderThreshold && person.walletBalance <= person.reminderThreshold;
+
+    await Promise.all([person.save(), campaign.save()]);
+
+    res.status(200).json({
+      message: 'Donation successful',
+      walletBalance: person.walletBalance,
+      campaignDonatedAmount: campaign.donatedAmount,
+      needsReminder
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAllPersons,
   getPersonById,
@@ -466,5 +368,7 @@ module.exports = {
   updatePerson,
   deletePerson,
   getAncestryTree,
-  getDescendantTree
+  getDescendantTree,
+  addWalletAmount,
+  donateFromWallet
 };
