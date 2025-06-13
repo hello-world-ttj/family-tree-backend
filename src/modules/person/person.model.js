@@ -55,10 +55,10 @@ const personSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Person'
   },
-  familyId: {
+  familyId: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Family'
-  },
+  }],
   relationships: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Relationship'
@@ -72,8 +72,11 @@ const personSchema = new mongoose.Schema({
     state: String,
     country: String,
     zipCode: String
-  },walletBalance: { type: Number, default: 0 },
+  },
+  walletBalance: { type: Number, default: 0 },
   lastRecharge: { type: Date },
+  lastRechargeAmount: { type: Number, default: 0 },
+totoalContribution: { type: Number, default: 0 },
   lastRenewed: { type: Date },
   nextRenewal: { type: Date },
   // Metadata

@@ -26,7 +26,11 @@ const familySchema = new mongoose.Schema({
     }
   }],
   image: String,
-  
+  parentFamilyId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Family'
+  }],
+
   
   location: {
     city: String,
