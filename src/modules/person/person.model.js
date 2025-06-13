@@ -80,6 +80,10 @@ totoalContribution: { type: Number, default: 0 },
   lastRenewed: { type: Date },
   nextRenewal: { type: Date },
   reminderThreshold: { type: Number },
+  receivedContributions: { type: Number, default: 0 },
+  fixedWalletAmount: { type: Number, default: 0 },
+  needsRechargeReminder: { type: Boolean, default: false },
+  isFinanceProgramMember: { type: Boolean, default: false },
   // Metadata
   isAlive: {
     type: Boolean,

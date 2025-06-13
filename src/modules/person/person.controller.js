@@ -2,6 +2,7 @@ const Person = require('./person.model');
 const Relationship = require('../relationship/relationship.model');
 const Family = require('../family/family.model');
 const Campaign = require('../campaign/campaign.model');
+const Transaction = require('../finance/finance.model');
 
 // Get all persons
 const getAllPersons = async (req, res) => {
@@ -267,9 +268,9 @@ const getDescendantTree = async (req, res) => {
 };
 
 // Add wallet amount
-const addWalletAmount = async (req, res) => {
+ const addWalletAmount = async (req, res) => {
   try {
-    const { personId, amount, reminderThreshold = 100 } = req.body;
+    const { personId, amount } = req.body;
     
     if (!amount || amount <= 0) {
       return res.status(400).json({ message: 'Invalid amount' });
@@ -279,23 +280,30 @@ const addWalletAmount = async (req, res) => {
     if (!person) {
       return res.status(404).json({ message: 'Person not found' });
     }
+    if (!person.isFinanceProgramMember) {
+      return res.status(400).json({ message: 'Person is not a finance program member' });
+    }
+
+    const transaction = new Transaction({
+      memberId: personId,
+      type: 'Recharge',
+      amount,
+      transactionId: `RECH-${Date.now()}-${personId}`,
+      status: 'Success'
+    });
 
     person.walletBalance += amount;
     person.lastRecharge = new Date();
     person.lastRechargeAmount = amount;
-    
-    // Store reminder threshold in person document
-    person.reminderThreshold = reminderThreshold;
+    person.needsRechargeReminder = person.walletBalance < person.fixedWalletAmount;
 
-    await person.save();
-
-    // Note: Actual email/sms reminder would be implemented via a separate notification service
-    // This is just storing the threshold for now
+    await Promise.all([person.save(), transaction.save()]);
 
     res.status(200).json({
       message: 'Wallet amount added successfully',
       walletBalance: person.walletBalance,
-      lastRecharge: person.lastRecharge
+      lastRecharge: person.lastRecharge,
+      needsRechargeReminder: person.needsRechargeReminder
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -303,6 +311,64 @@ const addWalletAmount = async (req, res) => {
 };
 
 // Donate to campaign from wallet
+// const donateFromWallet = async (req, res) => {
+//   try {
+//     const { personId, campaignId, amount } = req.body;
+
+//     if (!amount || amount <= 0) {
+//       return res.status(400).json({ message: 'Invalid donation amount' });
+//     }
+
+//     const person = await Person.findById(personId);
+//     if (!person) {
+//       return res.status(404).json({ message: 'Person not found' });
+//     }
+
+//     const campaign = await Campaign.findById(campaignId);
+//     if (!campaign) {
+//       return res.status(404).json({ message: 'Campaign not found' });
+//     }
+
+//     if (campaign.status !== 'Active') {
+//       return res.status(400).json({ message: 'Campaign is not active' });
+//     }
+
+//     if (person.walletBalance < amount) {
+//       return res.status(400).json({ message: 'Insufficient wallet balance' });
+//     }
+
+//     // Deduct from wallet
+//     person.walletBalance -= amount;
+//     person.totoalContribution += amount;
+
+//     // Add donation to campaign
+//     campaign.doatedMembers.push({
+//       member: personId,
+//       amount
+//     });
+//     campaign.donatedAmount += amount;
+
+//     // Check if target amount is reached
+//     if (campaign.donatedAmount >= campaign.targetAmount) {
+//       campaign.status = 'Transferred';
+//     }
+
+//     // Check if wallet balance is below reminder threshold
+//     const needsReminder = person.reminderThreshold && person.walletBalance <= person.reminderThreshold;
+
+//     await Promise.all([person.save(), campaign.save()]);
+
+//     res.status(200).json({
+//       message: 'Donation successful',
+//       walletBalance: person.walletBalance,
+//       campaignDonatedAmount: campaign.donatedAmount,
+//       needsReminder
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 const donateFromWallet = async (req, res) => {
   try {
     const { personId, campaignId, amount } = req.body;
@@ -315,6 +381,9 @@ const donateFromWallet = async (req, res) => {
     if (!person) {
       return res.status(404).json({ message: 'Person not found' });
     }
+    if (!person.isFinanceProgramMember) {
+      return res.status(400).json({ message: 'Person is not a finance program member' });
+    }
 
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) {
@@ -326,35 +395,44 @@ const donateFromWallet = async (req, res) => {
     }
 
     if (person.walletBalance < amount) {
-      return res.status(400).json({ message: 'Insufficient wallet balance' });
+      person.needsRechargeReminder = true;
+      await person.save();
+      return res.status(400).json({ 
+        message: 'Insufficient wallet balance',
+        needsRechargeReminder: true
+      });
     }
 
-    // Deduct from wallet
-    person.walletBalance -= amount;
-    person.totoalContribution += amount;
+    const transaction = new Transaction({
+      memberId: personId,
+      campaignId,
+      type: 'Contribution',
+      amount,
+      transactionId: `CONT-${Date.now()}-${personId}`,
+      status: 'Success'
+    });
 
-    // Add donation to campaign
+    person.walletBalance -= amount;
+    person.totalContribution += amount;
+    person.needsRechargeReminder = person.walletBalance < person.fixedWalletAmount;
+
     campaign.doatedMembers.push({
       member: personId,
       amount
     });
     campaign.donatedAmount += amount;
 
-    // Check if target amount is reached
     if (campaign.donatedAmount >= campaign.targetAmount) {
       campaign.status = 'Transferred';
     }
 
-    // Check if wallet balance is below reminder threshold
-    const needsReminder = person.reminderThreshold && person.walletBalance <= person.reminderThreshold;
-
-    await Promise.all([person.save(), campaign.save()]);
+    await Promise.all([person.save(), campaign.save(), transaction.save()]);
 
     res.status(200).json({
       message: 'Donation successful',
       walletBalance: person.walletBalance,
       campaignDonatedAmount: campaign.donatedAmount,
-      needsReminder
+      needsRechargeReminder: person.needsRechargeReminder
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
