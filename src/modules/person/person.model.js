@@ -66,12 +66,9 @@ const personSchema = new mongoose.Schema({
   // Contact information
   email: String,
   phone: String,
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    country: String,
-    zipCode: String
+  location: {
+    type: String,
+    trim: true
   },
   walletBalance: { type: Number, default: 0 },
   lastRecharge: { type: Date },
