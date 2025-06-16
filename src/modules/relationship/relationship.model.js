@@ -14,9 +14,7 @@ const relationshipSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: [
-      'spouse', 'parent-child', 'sibling', 
-      'grandparent-grandchild', 'uncle-nephew', 
-      'aunt-niece', 'cousin', 'other'
+      'spouse', 'parent', 'child'
     ],
     required: true
   },

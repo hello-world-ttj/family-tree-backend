@@ -87,6 +87,7 @@ totoalContribution: { type: Number, default: 0 },
   // Metadata
   isAlive: {
     type: Boolean,
+    enum: ['active', 'inactive', 'deceased'],
     default: true
   },
   isPrivate: {
