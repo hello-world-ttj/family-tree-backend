@@ -33,9 +33,9 @@ const familySchema = new mongoose.Schema({
 
   
   location: {
-    city: String,
-    state: String,
-    country: String
+    type: String,
+    trim: true
+    
   },
   
   // Family tree/genealogy info
