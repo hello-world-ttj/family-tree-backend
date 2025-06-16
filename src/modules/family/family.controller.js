@@ -1,5 +1,6 @@
 const Family = require('./family.model');
 const Person = require('../person/person.model');
+const response_handler = require('../../helpers/responseHandler');
 
 // Get all families
 const getAllFamilies = async (req, res) => {
@@ -19,15 +20,16 @@ const getAllFamilies = async (req, res) => {
       .sort({ name: 1 });
     
     const total = await Family.countDocuments(query);
-    
-    res.json({
+    const outputJson={
       families,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
       total
-    });
+    }
+    
+    return response_handler(res, 200, 'Families fetched successfully', outputJson);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return response_handler(res, 500, 'Error fetching families', error);
   }
 };
 
@@ -40,12 +42,12 @@ const getFamilyById = async (req, res) => {
       .populate('collaborators.user', 'name email');
     
     if (!family) {
-      return res.status(404).json({ message: 'Family not found' });
+      return response_handler(res, 404, 'Family not found');
     }
     
-    res.json(family);
+    return response_handler(res, 200, 'Family fetched successfully', family);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return response_handler(res, 500, 'Error fetching family', error);
   }
 };
 
@@ -60,9 +62,9 @@ const createFamily = async (req, res) => {
     await family.save();
     await family.populate('members.person', 'firstName lastName');
     
-    res.status(201).json(family);
+    return response_handler(res, 201, 'Family created successfully', family);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return response_handler(res, 400, 'Error creating family', error);
   }
 };
 
@@ -76,12 +78,12 @@ const updateFamily = async (req, res) => {
     ).populate('members.person', 'firstName lastName');
     
     if (!family) {
-      return res.status(404).json({ message: 'Family not found' });
+      return response_handler(res, 404, 'Family not found');
     }
     
-    res.json(family);
+    return response_handler(res, 200, 'Family updated successfully', family);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return response_handler(res, 400, 'Error updating family', error);
   }
 };
 
@@ -91,12 +93,12 @@ const deleteFamily = async (req, res) => {
     const family = await Family.findByIdAndDelete(req.params.id);
     
     if (!family) {
-      return res.status(404).json({ message: 'Family not found' });
+      return response_handler(res, 404, 'Family not found');
     }
     
-    res.json({ message: 'Family deleted successfully' });
+    return response_handler(res, 200, 'Family deleted successfully');
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return response_handler(res, 500, 'Error deleting family', error);
   }
 };
 
@@ -107,13 +109,13 @@ const addFamilyMember = async (req, res) => {
     const family = await Family.findById(req.params.id);
     
     if (!family) {
-      return res.status(404).json({ message: 'Family not found' });
+        return response_handler(res, 404, 'Family not found');
     }
     
     // Check if person exists
     const person = await Person.findById(personId);
     if (!person) {
-      return res.status(404).json({ message: 'Person not found' });
+      return response_handler(res, 404, 'Person not found');
     }
     
     // Check if person is already a member
@@ -122,15 +124,15 @@ const addFamilyMember = async (req, res) => {
     );
     
     if (existingMember) {
-      return res.status(400).json({ message: 'Person is already a family member' });
+      return response_handler(res, 400, 'Person is already a family member');
     }
     
     await family.addMember(personId, role);
     await family.populate('members.person', 'firstName lastName');
     
-    res.json(family);
+    return response_handler(res, 200, 'Family member added successfully', family);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return response_handler(res, 400, 'Error adding family member', error);
   }
 };
 
@@ -141,15 +143,15 @@ const removeFamilyMember = async (req, res) => {
     const family = await Family.findById(req.params.id);
     
     if (!family) {
-      return res.status(404).json({ message: 'Family not found' });
+      return response_handler(res, 404, 'Family not found');
     }
     
     await family.removeMember(personId);
     await family.populate('members.person', 'firstName lastName');
     
-    res.json(family);
+    return response_handler(res, 200, 'Family member removed successfully', family);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return response_handler(res, 400, 'Error removing family member', error);
   }
 };
 

@@ -1,11 +1,12 @@
 const Campaign = require('./campaign.model');
+const response_handler = require('../../helpers/responseHandler');
 
 exports.getAllCampaigns = async (req, res) => {
   try {
     const campaigns = await Campaign.find().sort({ createdAt: -1 });
-    res.status(200).json(campaigns);
+    return response_handler(res, 200, 'Campaigns fetched successfully', campaigns);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching campaigns', error });
+    return response_handler(res, 500, 'Error fetching campaigns', error);
   }
 };
 
@@ -14,9 +15,9 @@ exports.createCampaign = async (req, res) => {
     const { name, targetAmount, deadline, category, description, media } = req.body;
     const campaign = new Campaign({ name, targetAmount, deadline, category, description, media });
     await campaign.save();
-    res.status(201).json(campaign);
+    return response_handler(res, 201, 'Campaign created successfully', campaign);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating campaign', error });
+    return response_handler(res, 500, 'Error creating campaign', error);
   }
 };
 
@@ -31,8 +32,8 @@ exports.donateToCampaign = async (req, res) => {
     campaign.status = campaign.raisedSoFar >= campaign.targetAmount ? 'Transferred' : 'Active';
     await campaign.save();
     
-    res.status(200).json(campaign);
+    return response_handler(res, 200, 'Donation successful', campaign);
   } catch (error) {
-    res.status(500).json({ message: 'Error donating to campaign', error });
+    return response_handler(res, 500, 'Error donating to campaign', error);
   }
 };

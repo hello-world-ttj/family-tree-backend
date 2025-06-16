@@ -27,5 +27,8 @@ router.use("/persons", person_route);
 router.use("/relationships", relationship_route);
 router.use("/requests", request_route);
 
+//!TODO
+//!financials , campaigns , auth (otp, admin login, user login  , user register)
+
 
 module.exports = router;
