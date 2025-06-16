@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const transactionController = require('./finance.controller');
+const financeController = require('./finance.controller');
+const auth = require('../../middlewares/auth');
 
-router.get('/', transactionController.getAllTransactions);
-router.post('/', transactionController.createTransaction);
-router.put('/:id/status', transactionController.updateTransactionStatus);
+router.get('/', financeController.listAllTransactions);
+router.post('/recharge', auth, financeController.processRecharge);
+router.put('/:id', auth, financeController.updateTransaction);
+router.post('/memorial', auth, financeController.processMemorialContribution);
+router.post('/join', auth, financeController.joinFinanceProgram);
 
 module.exports = router;

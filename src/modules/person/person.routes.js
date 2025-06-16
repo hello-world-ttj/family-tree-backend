@@ -7,7 +7,9 @@ const {
   updatePerson,
   deletePerson,
   getAncestryTree,
-  getDescendantTree
+  getDescendantTree,
+  addWalletAmount,
+  donateFromWallet
 } = require('./person.controller');
 
 // Middleware for authentication (implement as needed)
@@ -33,5 +35,8 @@ router.get('/:id/ancestry', getAncestryTree);
 
 // GET /api/persons/:id/descendants - Get descendant tree
 router.get('/:id/descendants', getDescendantTree);
+
+router.post('/wallet/add', auth, addWalletAmount);
+router.post('/wallet/donate', auth, donateFromWallet);
 
 module.exports = router;

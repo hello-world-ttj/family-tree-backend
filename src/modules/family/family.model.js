@@ -26,12 +26,16 @@ const familySchema = new mongoose.Schema({
     }
   }],
   image: String,
-  
+  parentFamilyId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Family'
+  }],
+
   
   location: {
-    city: String,
-    state: String,
-    country: String
+    type: String,
+    trim: true
+    
   },
   
   // Family tree/genealogy info
